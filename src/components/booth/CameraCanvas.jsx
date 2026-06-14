@@ -69,9 +69,10 @@ export default function CameraCanvas({ videoRef, isReady, countdown, filter = 'n
           <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-primary-container opacity-80" />
           <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-primary-container opacity-80" />
           {/* Filter label */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-on-background/70 px-xs py-[2px]">
-            <span className="font-technical-sm text-technical-sm text-surface-container-highest uppercase">
-              {filterDef.icon} {filterDef.label}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-on-background/80 px-sm py-[3px] flex items-center gap-xs backdrop-blur-sm">
+            <span className="leading-none text-sm select-none" aria-hidden="true">{filterDef.icon}</span>
+            <span className="font-technical-sm text-technical-sm text-surface-container-highest uppercase tracking-widest">
+              {filterDef.label}
             </span>
           </div>
         </>

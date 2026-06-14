@@ -85,7 +85,7 @@ export function useCamera() {
     return canvas.toDataURL('image/jpeg', 0.92)
   }, [facingMode])
 
-  // Countdown then capture
+// Countdown then capture — shows 0 briefly so CameraCanvas flash fires
   const captureWithCountdown = useCallback((canvas, seconds = 3, filter = 'none') => {
     return new Promise((resolve) => {
       setIsCapturing(true)
@@ -96,10 +96,14 @@ export function useCamera() {
         count -= 1
         if (count <= 0) {
           clearInterval(interval)
-          setCountdown(null)
-          const dataUrl = captureFrame(canvas, filter)
-          setIsCapturing(false)
-          resolve(dataUrl)
+          setCountdown(0)  // show 0 so the flash overlay triggers in CameraCanvas
+          // Capture after one frame so the flash renders
+          requestAnimationFrame(() => {
+            const dataUrl = captureFrame(canvas, filter)
+            setCountdown(null)
+            setIsCapturing(false)
+            resolve(dataUrl)
+          })
         } else {
           setCountdown(count)
         }
