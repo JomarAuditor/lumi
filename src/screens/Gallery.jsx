@@ -5,7 +5,7 @@ import { useSupabaseStorage } from '../hooks/useSupabaseStorage'
 import PrintCard from '../components/gallery/PrintCard'
 import Button from '../components/common/Button'
 
-const SORT_OPTIONS  = ['Newest', 'Oldest']
+const SORT_OPTIONS   = ['Newest', 'Oldest']
 const FILTER_OPTIONS = [
   { key: 'All',   label: 'All'   },
   { key: 'Strip', label: 'Strip' },
@@ -14,8 +14,8 @@ const FILTER_OPTIONS = [
 ]
 
 export default function Gallery() {
-  const navigate                     = useNavigate()
-  const { user }                     = useAuth()
+  const navigate                         = useNavigate()
+  const { user, isAuthAvailable }        = useAuth()
   const { fetchUserPrints, deletePrint } = useSupabaseStorage()
 
   const [prints,      setPrints]      = useState([])
@@ -77,6 +77,56 @@ export default function Gallery() {
       const da = new Date(a.created_at), db = new Date(b.created_at)
       return sort === 'Newest' ? db - da : da - db
     })
+
+  // ── No Supabase configured — gallery not available ──────────────────────
+  if (!isAuthAvailable) {
+    return (
+      <div className="w-full min-h-[calc(100vh-64px)] bg-background flex items-center justify-center px-margin-mobile">
+        <div className="w-full max-w-[400px] flex flex-col items-center gap-lg text-center">
+          <div className="w-16 h-16 border-2 border-on-background bg-primary-container flex items-center justify-center neo-pop-shadow">
+            <span className="material-symbols-outlined text-[32px] text-on-primary-container">photo_library</span>
+          </div>
+          <div>
+            <h1 className="font-headline-xl text-headline-lg text-on-surface lowercase tracking-tighter">
+              gallery coming soon
+            </h1>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-xs">
+              Cloud gallery isn't set up yet — but the studio is fully working. Capture and download your prints right now.
+            </p>
+          </div>
+          <Button size="lg" className="w-full" onClick={() => navigate('/studio')}>
+            <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+            Open Studio
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // ── No Supabase configured — gallery not available ──────────────────────
+  if (!isAuthAvailable) {
+    return (
+      <div className="w-full min-h-[calc(100vh-64px)] bg-background flex items-center justify-center px-margin-mobile">
+        <div className="w-full max-w-[400px] flex flex-col items-center gap-lg text-center">
+          <div className="w-16 h-16 border-2 border-on-background bg-surface-container flex items-center justify-center neo-pop-shadow">
+            <span className="material-symbols-outlined text-[32px] text-on-surface-variant">cloud_off</span>
+          </div>
+          <div>
+            <h1 className="font-headline-xl text-headline-lg text-on-surface lowercase tracking-tighter">
+              gallery coming soon
+            </h1>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-xs">
+              Cloud gallery isn't set up yet — but the studio is fully working. Capture and download your prints directly.
+            </p>
+          </div>
+          <Button size="lg" className="w-full" onClick={() => navigate('/studio')}>
+            <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+            Open Studio
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   // ── Signed-out state ────────────────────────────────────────────────────
   if (!user && !loading) {

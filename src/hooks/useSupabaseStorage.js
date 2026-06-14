@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { supabase, supabaseConfigured } from '../lib/supabaseClient'
 
 const BUCKET = 'photobooth-prints'
 
@@ -34,6 +34,12 @@ export function useSupabaseStorage() {
   }
 
   const uploadPrint = useCallback(async (dataUrl, userId, metadata = {}) => {
+    // No Supabase — download still works, just no cloud save
+    if (!supabaseConfigured) {
+      console.info('[lumi] Supabase not configured — skipping cloud upload.')
+      return null
+    }
+
     setUploading(true)
     setProgress(0)
     setError(null)
@@ -97,6 +103,7 @@ export function useSupabaseStorage() {
   }, [])
 
   const fetchUserPrints = useCallback(async (userId) => {
+    if (!supabaseConfigured) return { data: [], error: null }
     try {
       const { data, error } = await supabase
         .from('prints')
@@ -113,6 +120,7 @@ export function useSupabaseStorage() {
   }, [])
 
   const deletePrint = useCallback(async (printId, storagePath) => {
+    if (!supabaseConfigured) return { success: false, error: 'Supabase not configured' }
     try {
       // Delete storage first — if it fails, keep the DB record (no orphan DB entry)
       const { error: storageError } = await supabase.storage
